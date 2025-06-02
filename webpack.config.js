@@ -85,11 +85,14 @@ module.exports = (env, argv) => {
         allowEmptyValues: true,
         systemvars: true,
       }),
-      new CopyWebpackPlugin({
-        patterns: [
-          { from: "public/_redirects", to: "_redirects" }, // Netlify redirect 
-        ],
-      }),
+      // new CopyWebpackPlugin({
+      //   patterns: [
+      //     {
+      //       from: path.resolve(__dirname, "public", "_redirects"), // ✅ 절대 경로로 파일 지정
+      //       to: path.resolve(__dirname, "dist", "_redirects"), // ✅ dist에 정확히 파일로 넣음
+      //     },
+      //   ],
+      // }),
     ],
   };
 };
