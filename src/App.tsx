@@ -1,25 +1,38 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Suspense } from "react";
+import logo from "./logo.svg";
+import "./App.css";
+import { Routes, Route } from "react-router";
+import SearchWithKeywordPage from "./pages/SearchWithKeywordPage/SearchWithKeywordPage";
+import PlaylistDetailPage from "./pages/PlaylistDetailPage/PlaylistDetailPage";
+import PlaylistPage from "./pages/PlaylistPage/PlaylistPage";
+import LoadingSpinner from "./common/components/LoadingSpinner";
+// import AppLayout from "./layout/AppLayout";
+// import HomePage from "./pages/HomePage/HomePage";
+// import SearchPage from "./pages/SearchPage/SearchPage";
+const AppLayout = React.lazy(() => import("./layout/AppLayout"));
+const HomePage = React.lazy(() => import("./pages/HomePage/HomePage"));
+const SearchPage = React.lazy(() => import("./pages/SearchPage/SearchPage"));
+
+// 사이드바
+// 홈페이지(랜딩 페이지)  /
+// 서치페이지 /search
+// 서치 결과 페이지 /search/:keyword
+// 플레이리스트 디테일 페이지 /playlist/:id
+// (모바일버전) 플레이리스트 보여주는 페이지 /playlist
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Suspense fallback={<LoadingSpinner />}>
+      <Routes>
+        <Route path="/" element={<AppLayout />}>
+          <Route index element={<HomePage />} />
+          <Route path="search" element={<SearchPage />} />
+          <Route path="search/:keyword" element={<SearchWithKeywordPage />} />
+          <Route path="playlist/:id" element={<PlaylistDetailPage />} />
+          <Route path="playlist" element={<PlaylistPage />} />
+        </Route>
+      </Routes>
+    </Suspense>
   );
 }
 
