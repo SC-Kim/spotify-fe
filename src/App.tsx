@@ -23,17 +23,15 @@ const SearchPage = React.lazy(() => import("./pages/SearchPage/SearchPage"));
 
 function App() {
   const urlParams = new URLSearchParams(window.location.search);
-
   let code = urlParams.get("code");
-  const codeVerifier = localStorage.getItem('code_verifier');
+  const codeVerifier = localStorage.getItem("code_verifier");
 
-  const {mutate: exchangeToken} = useExchangeToken()
+  const { mutate: exchangeToken } = useExchangeToken();
 
-  useEffect(()=>{
-    if (code && codeVerifier){
-      exchangeToken({code, codeVerifier});
+  useEffect(() => {
+    if (code && codeVerifier) {
+      exchangeToken({ code, codeVerifier });
     }
-
   }, [code, codeVerifier, exchangeToken]);
 
   return (
