@@ -44,7 +44,7 @@ const PlaylistDetailPage = () => {
   // return <div>PlaylistDetailPage: {id} </div>;
   return (
     <PlaylistHeader container spacing={7}>
-      <ImageGrid item sm={12} md={2}>
+      <ImageGrid size={{ sm: 12, md: 2 }}>
         {playlist?.images ? (
           <AlbumImage src={playlist?.images[0].url} alt="playlist_cover.jpg" />
         ) : (
@@ -53,7 +53,7 @@ const PlaylistDetailPage = () => {
           </DefaultImage>
         )}
       </ImageGrid>
-      <Grid item sm={12} md={10}>
+      <Grid size={{ sm: 6, md: 8 }}>
         <Box>
           <ResponsiveTypography variant="h1" color="white">
             {playlist?.name}
