@@ -1,9 +1,25 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Navigate, useParams } from "react-router";
 import useGetPlaylist from "../../hooks/useGetPlaylist";
 import MusicNoteIcon from "@mui/icons-material/MusicNote";
-import { Grid, styled, Typography, Box, GridProps } from "@mui/material";
+import {
+  Grid,
+  styled,
+  Typography,
+  Box,
+  GridProps,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+} from "@mui/material";
 import DefaultImage from "../../common/components/DefaultImage";
+import useGetPlaylistItems from "../../hooks/useGetPlaylistItems";
+import DesktopPlaylistItem from "./components/DesktopPlaylistItem";
+import { PAGE_LIMIT } from "../../configs/commonConfig";
+import { useInView } from "react-intersection-observer";
+import LoadingSpinner from "../../common/components/LoadingSpinner";
 
 const PlaylistHeader = styled(Grid)<GridProps>({
   display: "flex",
@@ -36,51 +52,126 @@ const ResponsiveTypography = styled(Typography)(({ theme }) => ({
   },
 }));
 
+// 내부 스크롤 컨테이너 스타일
+const TableScrollContainer = styled("div")(({ theme }) => ({
+  overflowY: "auto",
+  maxHeight: "600px",
+  "&::-webkit-scrollbar": {
+    display: "none",
+  },
+}));
+
 const PlaylistDetailPage = () => {
   const { id } = useParams<{ id: string }>();
   if (id === undefined) return <Navigate to="/" />;
   const { data: playlist } = useGetPlaylist({ playlist_id: id });
-  console.log("AH!!", playlist);
-  // return <div>PlaylistDetailPage: {id} </div>;
-  return (
-    <PlaylistHeader container spacing={7}>
-      <ImageGrid size={{ sm: 12, md: 2 }}>
-        {playlist?.images ? (
-          <AlbumImage src={playlist?.images[0].url} alt="playlist_cover.jpg" />
-        ) : (
-          <DefaultImage>
-            <MusicNoteIcon fontSize="large" />
-          </DefaultImage>
-        )}
-      </ImageGrid>
-      <Grid size={{ sm: 6, md: 8 }}>
-        <Box>
-          <ResponsiveTypography variant="h1" color="white">
-            {playlist?.name}
-          </ResponsiveTypography>
 
-          <Box display="flex" alignItems="center">
-            <img
-              src="https://i.scdn.co/image/ab67757000003b8255c25988a6ac314394d3fbf5"
-              width="20px"
+  const {
+    data: playlistItems,
+    isLoading: isPlaylistItemsLoading,
+    error: playlitItemsLoading,
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
+  } = useGetPlaylistItems({ playlist_id: id, limit: PAGE_LIMIT });
+
+  console.log("AH!!", playlistItems);
+  // return <div>PlaylistDetailPage: {id} </div>;
+
+  const { ref, inView } = useInView(); // 👈 감지용 ref
+
+  useEffect(() => {
+    if (inView && hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+  return (
+    <div>
+      <PlaylistHeader container spacing={7}>
+        <ImageGrid size={{ sm: 12, md: 2 }}>
+          {playlist?.images ? (
+            <AlbumImage
+              src={playlist?.images[0].url}
+              alt="playlist_cover.jpg"
             />
-            <Typography
-              variant="subtitle1"
-              color="white"
-              ml={1}
-              fontWeight={700}
-            >
-              {playlist?.owner?.display_name
-                ? playlist?.owner.display_name
-                : "unknown"}
-            </Typography>
-            <Typography variant="subtitle1" color="white">
-              • {playlist?.tracks?.total} songs
-            </Typography>
+          ) : (
+            <DefaultImage>
+              <MusicNoteIcon fontSize="large" />
+            </DefaultImage>
+          )}
+        </ImageGrid>
+        <Grid size={{ sm: 6, md: 8 }}>
+          <Box>
+            <ResponsiveTypography variant="h1" color="white">
+              {playlist?.name}
+            </ResponsiveTypography>
+
+            <Box display="flex" alignItems="center">
+              <img
+                src="https://i.scdn.co/image/ab67757000003b8255c25988a6ac314394d3fbf5"
+                width="20px"
+              />
+              <Typography
+                variant="subtitle1"
+                color="white"
+                ml={1}
+                fontWeight={700}
+              >
+                {playlist?.owner?.display_name
+                  ? playlist?.owner.display_name
+                  : "unknown"}
+              </Typography>
+              <Typography variant="subtitle1" color="white">
+                • {playlist?.tracks?.total} songs
+              </Typography>
+            </Box>
           </Box>
-        </Box>
-      </Grid>
-    </PlaylistHeader>
+        </Grid>
+      </PlaylistHeader>
+      {playlist?.tracks?.total === 0 ? (
+        <Typography> Search </Typography>
+      ) : (
+        <TableScrollContainer>
+          <Table
+            sx={{
+              "& thead .MuiTableCell-root": {
+                borderBottom: "1px solid rgba(224, 224, 224, 1)",
+              },
+              "& tbody .MuiTableCell-root": {
+                borderBottom: "none",
+              },
+            }}
+          >
+            <TableHead>
+              <TableRow>
+                <TableCell>#</TableCell>
+                <TableCell>Title</TableCell>
+                <TableCell>Album</TableCell>
+                <TableCell>Date added</TableCell>
+                <TableCell>Duration</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {playlistItems?.pages.map((page, pageIndex) =>
+                page.items.map((item, itemIndex) => (
+                  <DesktopPlaylistItem
+                    item={item}
+                    key={itemIndex}
+                    index={pageIndex * PAGE_LIMIT + itemIndex + 1}
+                  />
+                ))
+              )}
+              <TableRow>
+                <TableCell colSpan={5} align="center" ref={ref}>
+                  {isFetchingNextPage && <LoadingSpinner />}
+                </TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </TableScrollContainer>
+      )}
+    </div>
   );
 };
 
