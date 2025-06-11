@@ -20,6 +20,7 @@ import DesktopPlaylistItem from "./components/DesktopPlaylistItem";
 import { PAGE_LIMIT } from "../../configs/commonConfig";
 import { useInView } from "react-intersection-observer";
 import LoadingSpinner from "../../common/components/LoadingSpinner";
+import { TableContainer } from "@mui/material"; // 추가
 
 const PlaylistHeader = styled(Grid)<GridProps>({
   display: "flex",
@@ -59,6 +60,24 @@ const TableScrollContainer = styled("div")(({ theme }) => ({
   "&::-webkit-scrollbar": {
     display: "none",
   },
+}));
+
+const StickyTableContainer = styled(TableContainer)({
+  maxHeight: "600px",
+  overflowY: "auto",
+  "&::-webkit-scrollbar": {
+    display: "none",
+  },
+  msOverflowStyle: "none", // IE, Edge
+  scrollbarWidth: "none",  // Firefox
+});
+
+const StickyHeaderCell = styled(TableCell)(({ theme }) => ({
+  position: "sticky",
+  top: 0,
+  backgroundColor: theme.palette.common.black, 
+  color: theme.palette.common.white,         
+  zIndex: 1,
 }));
 
 const PlaylistDetailPage = () => {
@@ -132,12 +151,10 @@ const PlaylistDetailPage = () => {
       {playlist?.tracks?.total === 0 ? (
         <Typography> Search </Typography>
       ) : (
-        <TableScrollContainer>
+        <StickyTableContainer>
           <Table
+            stickyHeader
             sx={{
-              "& thead .MuiTableCell-root": {
-                borderBottom: "1px solid rgba(224, 224, 224, 1)",
-              },
               "& tbody .MuiTableCell-root": {
                 borderBottom: "none",
               },
@@ -145,11 +162,11 @@ const PlaylistDetailPage = () => {
           >
             <TableHead>
               <TableRow>
-                <TableCell>#</TableCell>
-                <TableCell>Title</TableCell>
-                <TableCell>Album</TableCell>
-                <TableCell>Date added</TableCell>
-                <TableCell>Duration</TableCell>
+                <StickyHeaderCell>#</StickyHeaderCell>
+                <StickyHeaderCell>Title</StickyHeaderCell>
+                <StickyHeaderCell>Album</StickyHeaderCell>
+                <StickyHeaderCell>Date added</StickyHeaderCell>
+                <StickyHeaderCell>Duration</StickyHeaderCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -169,7 +186,7 @@ const PlaylistDetailPage = () => {
               </TableRow>
             </TableBody>
           </Table>
-        </TableScrollContainer>
+        </StickyTableContainer>
       )}
     </div>
   );
