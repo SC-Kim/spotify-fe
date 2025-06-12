@@ -148,3 +148,10 @@ export interface PlaylistTrack {
   is_local?: boolean;
   track: Track | Episode;
 }
+
+export interface CreaetePlaylistRequest {
+  name: string;
+  playlistPublic?: boolean;
+  collaborative?: boolean;
+  description?: string;
+}

@@ -21,6 +21,10 @@ import { PAGE_LIMIT } from "../../configs/commonConfig";
 import { useInView } from "react-intersection-observer";
 import LoadingSpinner from "../../common/components/LoadingSpinner";
 import { TableContainer } from "@mui/material"; // 추가
+import LoginButton from "../../common/components/LoginButton";
+import { AxiosError } from "axios";
+import ErrorMessage from "../../common/components/ErrorMessage";
+import EmptyPlaylistWithSearch from "./components/EmptyPlaylistWithSearch";
 
 const PlaylistHeader = styled(Grid)<GridProps>({
   display: "flex",
@@ -83,12 +87,14 @@ const StickyHeaderCell = styled(TableCell)(({ theme }) => ({
 const PlaylistDetailPage = () => {
   const { id } = useParams<{ id: string }>();
   if (id === undefined) return <Navigate to="/" />;
-  const { data: playlist } = useGetPlaylist({ playlist_id: id });
+  const { data: playlist, error: playlistError } = useGetPlaylist({
+    playlist_id: id,
+  });
 
   const {
     data: playlistItems,
     isLoading: isPlaylistItemsLoading,
-    error: playlitItemsLoading,
+    error: playlistItemsError,
     hasNextPage,
     isFetchingNextPage,
     fetchNextPage,
@@ -109,6 +115,37 @@ const PlaylistDetailPage = () => {
       fetchNextPage();
     }
   }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+  const getErrorStatus = (err: unknown): number | undefined => {
+    if (err && typeof err === "object" && "response" in err) {
+      return (err as AxiosError).response?.status;
+    }
+    return undefined;
+  };
+
+  const playlistStatus = getErrorStatus(playlistError);
+  const itemsStatus = getErrorStatus(playlistItemsError);
+
+  if (playlistError || playlistItemsError) {
+    if (playlistStatus === 401 || itemsStatus === 401) {
+      return (
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          height="100%"
+          flexDirection="column"
+        >
+          <Typography variant="h2" fontWeight={700} mb="20px">
+            다시 로그인 하세요
+          </Typography>
+          <LoginButton />
+        </Box>
+      );
+    }
+
+    return <ErrorMessage errorMessage="Failed to load playlist" />;
+  }
 
   return (
     <div>
@@ -154,7 +191,7 @@ const PlaylistDetailPage = () => {
         </Grid>
       </PlaylistHeader>
       {playlist?.tracks?.total === 0 ? (
-        <Typography> Search </Typography>
+        <EmptyPlaylistWithSearch />
       ) : (
         <StickyTableContainer ref={scrollContainerRef}>
           <Table
