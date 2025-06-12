@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { Navigate, useParams } from "react-router";
 import useGetPlaylist from "../../hooks/useGetPlaylist";
 import MusicNoteIcon from "@mui/icons-material/MusicNote";
@@ -69,14 +69,14 @@ const StickyTableContainer = styled(TableContainer)({
     display: "none",
   },
   msOverflowStyle: "none", // IE, Edge
-  scrollbarWidth: "none",  // Firefox
+  scrollbarWidth: "none", // Firefox
 });
 
 const StickyHeaderCell = styled(TableCell)(({ theme }) => ({
   position: "sticky",
   top: 0,
-  backgroundColor: theme.palette.common.black, 
-  color: theme.palette.common.white,         
+  backgroundColor: theme.palette.common.black,
+  color: theme.palette.common.white,
   zIndex: 1,
 }));
 
@@ -97,7 +97,12 @@ const PlaylistDetailPage = () => {
   console.log("AH!!", playlistItems);
   // return <div>PlaylistDetailPage: {id} </div>;
 
-  const { ref, inView } = useInView(); // 👈 감지용 ref
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  const { ref, inView } = useInView({
+    root: scrollContainerRef.current ?? undefined,
+    threshold: 0.5,
+  });
 
   useEffect(() => {
     if (inView && hasNextPage && !isFetchingNextPage) {
@@ -151,7 +156,7 @@ const PlaylistDetailPage = () => {
       {playlist?.tracks?.total === 0 ? (
         <Typography> Search </Typography>
       ) : (
-        <StickyTableContainer>
+        <StickyTableContainer ref={scrollContainerRef}>
           <Table
             stickyHeader
             sx={{
@@ -180,8 +185,10 @@ const PlaylistDetailPage = () => {
                 ))
               )}
               <TableRow>
-                <TableCell colSpan={5} align="center" ref={ref}>
-                  {isFetchingNextPage && <LoadingSpinner />}
+                <TableCell colSpan={5} align="center">
+                  <div ref={ref}>
+                    {isFetchingNextPage && <LoadingSpinner />}
+                  </div>
                 </TableCell>
               </TableRow>
             </TableBody>
