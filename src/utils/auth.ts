@@ -18,7 +18,6 @@ export const getSpotifyAuthUrl = async () => {
   window.localStorage.setItem("code_verifier", codeVerifier);
 
   if(clientId && redirectUri) {
-    console.log("here!!!", redirectUri)
     const params: AuthUrlParams = {
         response_type: "code",
         client_id: clientId,

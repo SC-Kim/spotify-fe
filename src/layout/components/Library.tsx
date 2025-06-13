@@ -44,8 +44,6 @@ const Library = () => {
   if (isLoading) return <LoadingSpinner />;
   if (error) return <ErrorMessage errorMessage={error.message} />;
 
-  console.log("Here!!", data);
-
   return (
     <div>
       {!data || data?.pages[0].total === 0 ? (

@@ -100,8 +100,6 @@ const PlaylistDetailPage = () => {
     fetchNextPage,
   } = useGetPlaylistItems({ playlist_id: id, limit: PAGE_LIMIT });
 
-  console.log("AH!!", playlistItems);
-  // return <div>PlaylistDetailPage: {id} </div>;
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
@@ -127,8 +125,6 @@ const PlaylistDetailPage = () => {
   const itemsStatus = getErrorStatus(playlistItemsError);
 
   if (playlistError || playlistItemsError) {
-    console.log("playlistError", playlistError);
-    console.log("playlistItemsError", playlistItemsError);
     if (playlistStatus === 401 || itemsStatus === 401) {
       return (
         <Box
