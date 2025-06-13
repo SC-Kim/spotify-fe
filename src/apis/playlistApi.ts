@@ -1,3 +1,4 @@
+import { AxiosError } from "axios";
 import {
   CreaetePlaylistRequest,
   GetCurrentUserPlaylistRequest,
@@ -20,7 +21,7 @@ export const getCurrentUserPlaylists = async ({
     });
     return response.data;
   } catch (error) {
-    throw new Error("fail to fetch current user playlists");
+    throw error as AxiosError;
   }
 };
 
@@ -33,7 +34,7 @@ export const getPlaylist = async (
     });
     return response.data;
   } catch (error) {
-    throw new Error("Fail to fecth playlist detail");
+    throw error as AxiosError;
   }
 };
 

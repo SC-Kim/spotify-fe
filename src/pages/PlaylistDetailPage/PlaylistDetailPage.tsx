@@ -127,6 +127,8 @@ const PlaylistDetailPage = () => {
   const itemsStatus = getErrorStatus(playlistItemsError);
 
   if (playlistError || playlistItemsError) {
+    console.log("playlistError", playlistError);
+    console.log("playlistItemsError", playlistItemsError);
     if (playlistStatus === 401 || itemsStatus === 401) {
       return (
         <Box
@@ -143,7 +145,6 @@ const PlaylistDetailPage = () => {
         </Box>
       );
     }
-
     return <ErrorMessage errorMessage="Failed to load playlist" />;
   }
 
