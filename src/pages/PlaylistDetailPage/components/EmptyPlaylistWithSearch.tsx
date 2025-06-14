@@ -15,15 +15,35 @@ import { Track } from "../../../models/track";
 
 const SearchContainer = styled(Box)({
   // 스크롤 디자인
-  padding: "16px",
-  width: "100%",
-  height: "100vh",
-  overflowY: "auto",
+  // padding: "16px",
+  // width: "100%",
+  // height: "100vh",
+  // overflowY: "auto",
 
   "&::-webkit-scrollbar": {
     display: "none",
   },
-  msOverflowStyle: "none", // IE and Edge
+  // msOverflowStyle: "none", // IE and Edge
+  // scrollbarWidth: "none", // Firefox
+
+  display: "flex",           // ✅ 중요: 세로 배치
+  flexDirection: "column",   // ✅ 세로로 정렬
+  width: "100%",
+  height: "100vh",
+  overflow: "hidden",        // ✅ 전체 스크롤 막고 내부 ScrollArea만 스크롤되게
+});
+
+
+const ScrollArea = styled(Box)({
+  flexGrow: 1,
+  overflowY: "auto",
+  padding: "16px",
+
+   /* 스크롤바 숨기기 */
+   "&::-webkit-scrollbar": {
+    display: "none",
+  },
+  msOverflowStyle: "none", // IE, Edge
   scrollbarWidth: "none", // Firefox
 });
 
@@ -70,8 +90,8 @@ const EmptyPlaylistWithSearch = () => {
   };
 
   return (
-    <SearchContainer id="scrollable-container">
-      <Box display="inline-block">
+    <SearchContainer>
+      <Box display="inline-block" sx={{ maxWidth: 600, width: "100%", px: 2 }}>
         <Typography variant="h1" my="10px">
           Let's find something for your playlist
         </Typography>
@@ -94,22 +114,24 @@ const EmptyPlaylistWithSearch = () => {
           onChange={handleSearchKeyword}
         />
       </Box>
-      <div>
-        {isLoading ? (
-          <LoadingSpinner /> // 로딩 중일 때 스피너 표시
-        ) : hasResults ? (
-          <SearchResultList // nextpage관련 속성 추가
-            list={tracks}
-            hasNextPage={hasNextPage}
-            isFetchingNextPage={isFetchingNextPage}
-            fetchNextPage={fetchNextPage}
-          />
-        ) : keyword === "" ? (
-          <></> // 검색어가 없을 때는 아무것도 표시하지 않음
-        ) : (
-          <div>{`No Result for "${keyword}"`}</div> // 검색 결과가 없을 때만 표시
-        )}
-      </div>
+      <ScrollArea id="scrollable-container">
+        <div>
+          {isLoading ? (
+            <LoadingSpinner /> // 로딩 중일 때 스피너 표시
+          ) : hasResults ? (
+            <SearchResultList // nextpage관련 속성 추가
+              list={tracks}
+              hasNextPage={hasNextPage}
+              isFetchingNextPage={isFetchingNextPage}
+              fetchNextPage={fetchNextPage}
+            />
+          ) : keyword === "" ? (
+            <></> // 검색어가 없을 때는 아무것도 표시하지 않음
+          ) : (
+            <div>{`No Result for "${keyword}"`}</div> // 검색 결과가 없을 때만 표시
+          )}
+        </div>
+      </ScrollArea>
     </SearchContainer>
   );
 };
