@@ -1,3 +1,4 @@
+import { useInView } from "react-intersection-observer";
 import {
   FetchNextPageOptions,
   InfiniteQueryObserverResult,
@@ -14,7 +15,7 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import { useInView } from "react-intersection-observer";
+
 import { useEffect } from "react";
 import LoadingSpinner from "../../../common/components/LoadingSpinner";
 
@@ -59,11 +60,12 @@ const SearchResultList = ({
       typeof window !== "undefined"
         ? document.querySelector("#scrollable-container")
         : null,
-    threshold: 0.5,
+    threshold: 0.3,
   });
 
   useEffect(() => {
     // fetchNextPage 호출 추가
+
     if (inView && hasNextPage && !isFetchingNextPage) {
       fetchNextPage();
     }
@@ -71,34 +73,38 @@ const SearchResultList = ({
 
   return (
     <StyledTableContainer>
-      <TableBody sx={{ width: "100%" }}>
-        {list.map((track) => (
-          <StyledTableRow key={track.id}>
-            <TableCell>
-              <Box display="flex" alignItems="center">
-                <Box>
-                  <AlbumImage src={track.album?.images[0].url} width="40px" />
+      <Table>
+        <TableBody sx={{ width: "100%" }}>
+          {list.map((track) => (
+            <StyledTableRow key={track.id}>
+              <TableCell>
+                <Box display="flex" alignItems="center">
+                  <Box>
+                    <AlbumImage src={track.album?.images[0].url} width="40px" />
+                  </Box>
+                  <Box>
+                    <Typography fontWeight={700}>{track.name}</Typography>
+                    <Typography color="text.secondary">
+                      {track.artists ? track.artists[0].name : "Unknown Artist"}
+                    </Typography>
+                  </Box>
                 </Box>
-                <Box>
-                  <Typography fontWeight={700}>{track.name}</Typography>
-                  <Typography color="text.secondary">
-                    {track.artists ? track.artists[0].name : "Unknown Artist"}
-                  </Typography>
-                </Box>
-              </Box>
-            </TableCell>
-            <TableCell>{track.album?.name}</TableCell>
-            <TableCell>
-              <Button>Add</Button>
+              </TableCell>
+              <TableCell>{track.album?.name}</TableCell>
+              <TableCell>
+                <Button>Add</Button>
+              </TableCell>
+            </StyledTableRow>
+          ))}
+
+          <StyledTableRow ref={ref}>
+            <TableCell colSpan={3} align="center" sx={{ height: 200 }}>
+              <Typography>더 불러오는 중…</Typography>
             </TableCell>
           </StyledTableRow>
-        ))}
-        <div ref={ref} style={{ height: 1 }}>
-          {" "}
-          // 무한스크롤 영역 추가
-          {isFetchingNextPage && <LoadingSpinner />}
-        </div>
-      </TableBody>
+
+        </TableBody>
+      </Table>
     </StyledTableContainer>
   );
 };

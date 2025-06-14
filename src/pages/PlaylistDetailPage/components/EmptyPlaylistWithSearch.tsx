@@ -17,9 +17,9 @@ const SearchContainer = styled(Box)({
   // 스크롤 디자인
   padding: "16px",
   width: "100%",
-  height: "100%",
+  height: "100vh",
   overflowY: "auto",
-  position: "relative",
+
   "&::-webkit-scrollbar": {
     display: "none",
   },
@@ -62,15 +62,8 @@ const EmptyPlaylistWithSearch = () => {
     q: keyword,
     type: [SEARCH_TYPE.Track],
   });
-
-  const tracks = Array.from(
-    new Map(
-      (data?.pages
-        .flatMap((page) => page.tracks?.items ?? [])
-        .filter((track): track is Track => !!track) ?? []
-      ).map((track) => [track.id, track])
-    ).values()
-  );
+  const tracks: Track[] =
+    data?.pages.flatMap((page) => page.tracks?.items ?? []) ?? [];
   const hasResults = tracks.length > 0;
   const handleSearchKeyword = (event: React.ChangeEvent<HTMLInputElement>) => {
     setKeyword(event.target.value);
@@ -101,12 +94,11 @@ const EmptyPlaylistWithSearch = () => {
           onChange={handleSearchKeyword}
         />
       </Box>
-
       <div>
         {isLoading ? (
           <LoadingSpinner /> // 로딩 중일 때 스피너 표시
         ) : hasResults ? (
-          <SearchResultList // nextpage관련 속성 추가 
+          <SearchResultList // nextpage관련 속성 추가
             list={tracks}
             hasNextPage={hasNextPage}
             isFetchingNextPage={isFetchingNextPage}
