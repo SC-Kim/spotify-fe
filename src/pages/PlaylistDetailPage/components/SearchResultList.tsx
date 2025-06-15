@@ -46,6 +46,7 @@ interface SearchResultListProps {
   hasNextPage: boolean;
   isFetchingNextPage: boolean;
   fetchNextPage: () => void;
+  onAddClick: (track: Track) => void;
 }
 
 const SearchResultList = ({
@@ -53,6 +54,7 @@ const SearchResultList = ({
   hasNextPage,
   isFetchingNextPage,
   fetchNextPage,
+  onAddClick,
 }: SearchResultListProps) => {
   // const [ref, inView] = useInView(); // 무한스크롤 옵저버 추가
   const [ref, inView] = useInView({
@@ -92,7 +94,14 @@ const SearchResultList = ({
               </TableCell>
               <TableCell>{track.album?.name}</TableCell>
               <TableCell>
-                <Button>Add</Button>
+                <Button
+                  onClick={() => {
+                    console.log("Add 클릭됨:", track); // 디버깅 로그
+                    onAddClick(track);
+                  }}
+                >
+                  Add
+                </Button>
               </TableCell>
             </StyledTableRow>
           ))}
@@ -102,7 +111,6 @@ const SearchResultList = ({
               <Typography>더 불러오는 중…</Typography>
             </TableCell>
           </StyledTableRow>
-
         </TableBody>
       </Table>
     </StyledTableContainer>

@@ -61,10 +61,27 @@ export const createPlaylist = async (
       name,
       public: playlistPublic,
       collaborative,
-      description
+      description,
     });
     return response.data;
   } catch (error) {
     throw new Error("fail to create playlist");
+  }
+};
+
+export const addTrackToPlaylist = async (
+  playlistId: string,
+  trackId: string
+): Promise<void> => {
+  console.log("📦 보내는 데이터:", {
+    uris: [`spotify:track:${trackId}`],
+  });
+  try {
+    await api.post(`/playlists/${playlistId}/tracks`, {
+      uris: [`spotify:track:${trackId}`], // ✅ 수정
+    });
+  } catch (error) {
+    console.error("🚨 addTrackToPlaylist API 에러:", error);
+    throw new Error("Fail to add a track to playlist");
   }
 };

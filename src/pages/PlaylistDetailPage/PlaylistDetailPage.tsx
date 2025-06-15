@@ -188,7 +188,13 @@ const PlaylistDetailPage = () => {
         </Grid>
       </PlaylistHeader>
       {playlist?.tracks?.total === 0 ? (
-        <EmptyPlaylistWithSearch />
+        <EmptyPlaylistWithSearch
+        playlistId={id} 
+        onTrackAdded={() => {
+          console.log("onTrackAdded() 호출됨");
+          // 여기서 검색 종료나 트랙 목록 리패치를 원한다면 상태 업데이트 추가
+        }}
+      />
       ) : (
         <StickyTableContainer ref={scrollContainerRef}>
           <Table
