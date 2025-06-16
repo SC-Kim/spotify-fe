@@ -7,6 +7,8 @@ import SearchIcon from "@mui/icons-material/Search";
 import LibraryHead from "./components/LibraryHead";
 import Library from "./components/Library";
 import Navbar from "./components/Navbar";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Layout = styled("div")({
   display: "flex",
@@ -85,6 +87,8 @@ const AppLayout = () => {
         <Navbar />
         <Outlet />
       </ContentBox>
+
+      <ToastContainer position="top-right" autoClose={3000} />
     </Layout>
   );
 };

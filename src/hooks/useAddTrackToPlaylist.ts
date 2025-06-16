@@ -18,11 +18,12 @@ const useAddTrackToPlaylist = () => {
       return addTrackToPlaylist(playlistId, track.id);
     },
     onSuccess: () => {
-      toast.success("트랙이 성공적으로 추가되었습니다!");
+      console.log("트랙 추가 성공!!");
+    //   toast.success("트랙이 성공적으로 추가되었습니다!");
     },
     onError: (error: any) => {
-      console.error("🚨 트랙 추가 중 에러:", error);
-      toast.error("트랙 추가에 실패했습니다.");
+      console.error("트랙 추가 중 에러:", error);
+    //   toast.error("트랙 추가에 실패했습니다.");
     },
   });
 

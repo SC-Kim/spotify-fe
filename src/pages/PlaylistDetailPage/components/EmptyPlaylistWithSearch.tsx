@@ -105,7 +105,6 @@ const EmptyPlaylistWithSearch = ({
     try {
       console.log("🟢 addTrack 시작:", track);
       await addTrack({playlistId, track});
-      toast.success("트랙이 추가되었습니다!");
       onTrackAdded(); // ✅ 검색 종료 + 트랙 목록 리패치
     } catch (error) {
       toast.error("트랙 추가 실패");

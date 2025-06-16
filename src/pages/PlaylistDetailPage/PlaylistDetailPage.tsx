@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Navigate, useParams } from "react-router";
 import useGetPlaylist from "../../hooks/useGetPlaylist";
 import MusicNoteIcon from "@mui/icons-material/MusicNote";
@@ -25,6 +25,7 @@ import LoginButton from "../../common/components/LoginButton";
 import { AxiosError } from "axios";
 import ErrorMessage from "../../common/components/ErrorMessage";
 import EmptyPlaylistWithSearch from "./components/EmptyPlaylistWithSearch";
+import { useQueryClient } from "@tanstack/react-query";
 
 const PlaylistHeader = styled(Grid)<GridProps>({
   display: "flex",
@@ -100,6 +101,14 @@ const PlaylistDetailPage = () => {
     fetchNextPage,
   } = useGetPlaylistItems({ playlist_id: id, limit: PAGE_LIMIT });
 
+  const [isEmpty, setIsEmpty] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (playlist?.tracks?.total === 0) {
+      setIsEmpty(true);
+    }
+  }, [playlist]);
+  const queryClient = useQueryClient();
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
@@ -187,14 +196,32 @@ const PlaylistDetailPage = () => {
           </Box>
         </Grid>
       </PlaylistHeader>
-      {playlist?.tracks?.total === 0 ? (
+      {isEmpty ? (
         <EmptyPlaylistWithSearch
-        playlistId={id} 
-        onTrackAdded={() => {
-          console.log("onTrackAdded() 호출됨");
-          // 여기서 검색 종료나 트랙 목록 리패치를 원한다면 상태 업데이트 추가
-        }}
-      />
+          playlistId={id}
+          onTrackAdded={() => {
+            if (!id) return;
+
+            queryClient.invalidateQueries({
+              queryKey: ["playlist-detail", id],
+            });
+
+            queryClient.invalidateQueries({
+              predicate: (query) => {
+                const key = query.queryKey;
+                return (
+                  key[0] === "playlist-items" &&
+                  typeof key[1] === "object" &&
+                  (key[1] as { playlist_id: string }).playlist_id === id
+                );
+              },
+            });
+
+            queryClient.invalidateQueries({ queryKey: ["current-user-playlists"] });
+
+            setIsEmpty(false); 
+          }}
+        />
       ) : (
         <StickyTableContainer ref={scrollContainerRef}>
           <Table
