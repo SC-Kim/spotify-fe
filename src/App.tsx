@@ -39,8 +39,8 @@ function App() {
       <Routes>
         <Route path="/" element={<AppLayout />}>
           <Route index element={<HomePage />} />
-          <Route path="search" element={<SearchPage />} />
-          <Route path="search/:keyword" element={<SearchWithKeywordPage />} />
+          <Route path="search/:keyword?" element={<SearchPage />} />
+          {/* <Route path="search/:keyword" element={<SearchWithKeywordPage />} /> */}
           <Route path="playlist/:id" element={<PlaylistDetailPage />} />
           <Route path="playlist" element={<PlaylistPage />} />
           <Route path="callback" element={<HomePage />} />

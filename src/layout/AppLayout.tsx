@@ -12,8 +12,9 @@ import "react-toastify/dist/ReactToastify.css";
 
 const Layout = styled("div")({
   display: "flex",
-  height: "100vh",
+  height: "100vh", 
   padding: "8px",
+  overflow: "hidden",
 });
 
 const Sidebar = styled("div")(({ theme }) => ({
@@ -83,7 +84,15 @@ const AppLayout = () => {
           <Library />
         </ContentBox>
       </Sidebar>
-      <ContentBox>
+      <ContentBox
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          flex: 1, // ✅ 부모 Layout 기준으로 채움
+          minHeight: 0, // ✅ overflow 계산을 위해 필요
+          overflowY: "auto", // ✅ 스크롤 가능하게
+        }}
+      >
         <Navbar />
         <Outlet />
       </ContentBox>
