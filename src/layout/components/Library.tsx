@@ -7,19 +7,19 @@ import Playlist from "./Playlist";
 import EmptyPlaylist from "./EmptyPlaylist";
 import useGetCurrentUserProfile from "../../hooks/useGetCurrentUserProfile";
 import { useInView } from "react-intersection-observer";
-const PlaylistContainer = styled("div")(({ theme }) => ({
+const PlaylistContainer = styled("div")({
+  flex: 1, // 남은 영역 전부 사용
+  minHeight: 0, // overflow 계산을 위해 필요
   overflowY: "auto",
-  maxHeight: "calc(100vh - 240px)",
-  height: "100%",
+  overflowX: "hidden",
+  paddingLeft: "12px", 
+
   "&::-webkit-scrollbar": {
     display: "none",
-    msOverflowStyle: "none", // IE and Edge
-    scrollbarWidth: "none", // Firefox
   },
-  [theme.breakpoints.down("sm")]: {
-    maxHeight: "calc(100vh - 65px - 119px)",
-  },
-}));
+  scrollbarWidth: "none", // Firefox
+  msOverflowStyle: "none", // IE/Edge
+});
 const Library = () => {
   const { ref, inView } = useInView();
   const {
@@ -45,18 +45,18 @@ const Library = () => {
   if (error) return <ErrorMessage errorMessage={error.message} />;
 
   return (
-    <div>
+    <PlaylistContainer>
       {!data || data?.pages[0].total === 0 ? (
         <EmptyPlaylist />
       ) : (
-        <PlaylistContainer>
+        <>
           {data?.pages.map((page, index) => (
             <Playlist playlists={page.items} key={index} />
           ))}
-          <div ref={ref}>{isFetchingNextPage && <LoadingSpinner/>}</div>
-        </PlaylistContainer>
+          <div ref={ref}>{isFetchingNextPage && <LoadingSpinner />}</div>
+        </>
       )}
-    </div>
+    </PlaylistContainer>
   );
 };
 

@@ -72,7 +72,10 @@ const formatDuration = (ms: number = 0): string => {
   return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
 };
 
-const TrackCard = ({ track }: TrackCardProps) => {
+const TrackCard = ({
+  track,
+  onAddClick,
+}: TrackCardProps & { onAddClick: (track: Track) => void }) => {
   const [hovered, setHovered] = useState(false);
 
   const trackName = track.name || "Unknown Track";
@@ -81,7 +84,10 @@ const TrackCard = ({ track }: TrackCardProps) => {
   const imageUrl = track.album?.images?.[0]?.url || "";
 
   return (
-    <Container onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}>
+    <Container
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
       {/* 왼쪽: 이미지 + 텍스트 */}
       <Box display="flex" alignItems="center" flex={1} overflow="hidden">
         <AlbumImage src={imageUrl} alt={trackName} />
@@ -98,7 +104,11 @@ const TrackCard = ({ track }: TrackCardProps) => {
             <IconButton size="small" sx={{ color: "#1db954" }}>
               <PlayArrowIcon />
             </IconButton>
-            <IconButton size="small" sx={{ color: "#fff" }}>
+            <IconButton
+              size="small"
+              sx={{ color: "#fff" }}
+              onClick={() => onAddClick(track)}
+            >
               <PlaylistAddIcon />
             </IconButton>
           </>

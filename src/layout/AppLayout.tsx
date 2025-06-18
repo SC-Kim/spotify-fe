@@ -12,17 +12,19 @@ import "react-toastify/dist/ReactToastify.css";
 
 const Layout = styled("div")({
   display: "flex",
-  height: "100vh", 
+  height: "100vh",
+  minHeight: 0,
   padding: "8px",
   overflow: "hidden",
 });
 
 const Sidebar = styled("div")(({ theme }) => ({
-  width: "331px",
-  height: "100%",
+  width: "240px",
+  height: "100vh",
+  minHeight: 0,
   display: "flex",
-  flexDirection: "column",
-  marginRight: "16px",
+  flexDirection: "column", // ✅ 위아래로 정렬
+  marginRight: "8px",
   [theme.breakpoints.down("sm")]: {
     display: "none",
   },
@@ -33,7 +35,7 @@ const ContentBox = styled(Box)(({ theme }) => ({
   backgroundColor: theme.palette.background.paper,
   color: theme.palette.text.primary,
   width: "100%",
-  padding: "8px",
+  padding: "2px",
   marginBottom: "8px",
   marginRight: "8px",
 }));
@@ -63,7 +65,7 @@ const AppLayout = () => {
   return (
     <Layout>
       <Sidebar>
-        <ContentBox>
+        <ContentBox sx={{ flexShrink: 0 }}>
           <NavList>
             <StyledNavLink to="/">
               <HomeIcon />
@@ -79,9 +81,34 @@ const AppLayout = () => {
             </StyledNavLink>
           </NavList>
         </ContentBox>
-        <ContentBox height="100%">
-          <LibraryHead />
-          <Library />
+
+        {/* 고정된 LibraryHead + 스크롤 가능한 Library */}
+        <ContentBox
+          sx={{
+            flex: 1,
+            minHeight: 0,
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <Box sx={{ flexShrink: 0 }}>
+            <LibraryHead />
+          </Box>
+
+          {/* ✅ 이 Box가 scroll container가 되어야 함 */}
+          <Box
+            sx={{
+              flex: 1,
+              minHeight: 0,
+              overflowY: "auto",
+              overflowX: "hidden",
+              "&::-webkit-scrollbar": { display: "none" },
+              scrollbarWidth: "none",
+              msOverflowStyle: "none",
+            }}
+          >
+            <Library />
+          </Box>
         </ContentBox>
       </Sidebar>
       <ContentBox
@@ -90,7 +117,13 @@ const AppLayout = () => {
           flexDirection: "column",
           flex: 1, // ✅ 부모 Layout 기준으로 채움
           minHeight: 0, // ✅ overflow 계산을 위해 필요
-          overflowY: "auto", // ✅ 스크롤 가능하게
+          overflowY: "auto", // ✅ 스크롤은 허용
+          overflowX: "hidden", // ✅ 가로 스크롤 제거
+          "&::-webkit-scrollbar": {
+            display: "none", // ✅ Chrome, Safari 등에서 스크롤바 숨김
+          },
+          scrollbarWidth: "none", // ✅ Firefox에서 스크롤바 숨김
+          msOverflowStyle: "none", // ✅ IE, Edge에서 스크롤바 숨김
         }}
       >
         <Navbar />

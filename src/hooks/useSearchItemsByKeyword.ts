@@ -15,7 +15,7 @@ const useSearchItemsByKeyword = (params: SearchRequestParams) => {
         offset: pageParam,
       });
     },
-    enabled: !!params.q,
+    enabled: !!params.q && !!clientCredentialToken, 
     initialPageParam: 0,
     getNextPageParam: (lastPage) => {
       const nextPageUrl =

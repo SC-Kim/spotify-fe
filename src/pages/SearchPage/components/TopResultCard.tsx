@@ -92,7 +92,10 @@ const formatDuration = (ms: number = 0): string => {
   return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
 };
 
-const TopResultCard = ({ track }: TopResultCardProps) => {
+const TopResultCard = ({
+  track,
+  onAddClick,
+}: TopResultCardProps & { onAddClick: (track: Track) => void }) => {
   const [hovered, setHovered] = useState(false);
 
   const imageUrl = track.album?.images?.[0]?.url || "";
@@ -125,7 +128,7 @@ const TopResultCard = ({ track }: TopResultCardProps) => {
           </PlayButton>
 
           {/* 추가하기 버튼 */}
-          <AddButton>
+          <AddButton onClick={() => onAddClick(track)}>
             <PlaylistAddIcon />
           </AddButton>
         </>

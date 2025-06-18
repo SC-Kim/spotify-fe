@@ -20,7 +20,7 @@ const SearchPage = () => {
       <Box mb={3}>
         <SearchInput />
       </Box>
-      {keyword ? (
+      {keyword && keyword.trim().length > 0 ? (
         <SearchResultSection keyword={keyword} />
       ) : (
         <CategoryCardList />

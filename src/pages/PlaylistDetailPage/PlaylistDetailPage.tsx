@@ -106,8 +106,12 @@ const PlaylistDetailPage = () => {
   useEffect(() => {
     if (playlist?.tracks?.total === 0) {
       setIsEmpty(true);
+      console.log("🎵 트랙 없음, isEmpty = true");
+    } else if (playlist?.tracks?.total && playlist.tracks.total > 0) {
+      setIsEmpty(false);
+      console.log("🎵 트랙 있음, isEmpty = false");
     }
-  }, [playlist]);
+  }, [playlist?.tracks?.total]);
   const queryClient = useQueryClient();
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -217,9 +221,11 @@ const PlaylistDetailPage = () => {
               },
             });
 
-            queryClient.invalidateQueries({ queryKey: ["current-user-playlists"] });
+            queryClient.invalidateQueries({
+              queryKey: ["current-user-playlists"],
+            });
 
-            setIsEmpty(false); 
+            setIsEmpty(false);
           }}
         />
       ) : (
