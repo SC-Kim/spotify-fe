@@ -9,6 +9,7 @@ import Library from "./components/Library";
 import Navbar from "./components/Navbar";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import MobileBottomNavigation from "./components/MobileBottomNavigation";
 
 const Layout = styled("div")({
   display: "flex",
@@ -124,6 +125,7 @@ const AppLayout = () => {
           },
           scrollbarWidth: "none", // ✅ Firefox에서 스크롤바 숨김
           msOverflowStyle: "none", // ✅ IE, Edge에서 스크롤바 숨김
+          paddingBottom: { xs: "60px", sm: 0 }, // 하단 바 가리지 않도록
         }}
       >
         <Navbar />
@@ -131,6 +133,7 @@ const AppLayout = () => {
       </ContentBox>
 
       <ToastContainer position="top-right" autoClose={3000} />
+      <MobileBottomNavigation />
     </Layout>
   );
 };

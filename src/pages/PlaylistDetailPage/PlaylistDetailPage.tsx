@@ -26,6 +26,9 @@ import { AxiosError } from "axios";
 import ErrorMessage from "../../common/components/ErrorMessage";
 import EmptyPlaylistWithSearch from "./components/EmptyPlaylistWithSearch";
 import { useQueryClient } from "@tanstack/react-query";
+import { useTheme, useMediaQuery, IconButton } from "@mui/material";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { useNavigate } from "react-router-dom";
 
 const PlaylistHeader = styled(Grid)<GridProps>({
   display: "flex",
@@ -86,6 +89,10 @@ const StickyHeaderCell = styled(TableCell)(({ theme }) => ({
 }));
 
 const PlaylistDetailPage = () => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const navigate = useNavigate();
+
   const { id } = useParams<{ id: string }>();
   if (id === undefined) return <Navigate to="/" />;
   const { data: playlist, error: playlistError } = useGetPlaylist({
@@ -159,6 +166,17 @@ const PlaylistDetailPage = () => {
 
   return (
     <div>
+      {isMobile && (
+        <Box display="flex" alignItems="center" px={2} pt={2}>
+          <IconButton onClick={() => navigate(-1)}>
+            <ArrowBackIcon sx={{ color: "white" }} />
+          </IconButton>
+          <Typography variant="h6" color="white" fontWeight="bold" ml={1}>
+            {playlist?.name}
+          </Typography>
+        </Box>
+      )}
+
       <PlaylistHeader container spacing={7}>
         <ImageGrid size={{ sm: 12, md: 2 }}>
           {playlist?.images ? (

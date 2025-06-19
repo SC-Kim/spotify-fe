@@ -17,6 +17,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { addTrackToPlaylist } from "../../apis/playlistApi";
 import { Track } from "../../models/track";
 import { toast } from "react-toastify";
+import { useTheme, useMediaQuery } from "@mui/material";
 
 interface AddToPlaylistModalProps {
   open: boolean;
@@ -44,6 +45,9 @@ const AddToPlaylistModal = ({
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const queryClient = useQueryClient();
+
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   // 🔁 무한스크롤 설정
   useEffect(() => {
@@ -255,7 +259,13 @@ const AddToPlaylistModal = ({
         autoHideDuration={3000}
         onClose={handleSnackbarClose}
         message="🎵 음악이 플레이리스트에 추가되었습니다!"
-        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        anchorOrigin={{
+          vertical: isMobile ? "bottom" : "bottom",
+          horizontal: "center",
+        }}
+        sx={{
+          bottom: isMobile ? "80px" : undefined, // 하단 메뉴 높이 고려
+        }}
       />
     </>
   );

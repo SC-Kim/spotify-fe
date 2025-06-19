@@ -28,6 +28,8 @@ function App() {
 
   const { mutate: exchangeToken } = useExchangeToken();
 
+  const LibraryPage = React.lazy(() => import("./pages/LibraryPage/LibraryPage"));
+
   useEffect(() => {
     if (code && codeVerifier) {
       exchangeToken({ code, codeVerifier });
@@ -44,6 +46,7 @@ function App() {
           <Route path="playlist/:id" element={<PlaylistDetailPage />} />
           <Route path="playlist" element={<PlaylistPage />} />
           <Route path="callback" element={<HomePage />} />
+          <Route path="library" element={<LibraryPage />} />
         </Route>
       </Routes>
     </Suspense>

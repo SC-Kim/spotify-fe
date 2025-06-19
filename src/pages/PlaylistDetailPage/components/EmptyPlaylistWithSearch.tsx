@@ -14,6 +14,7 @@ import LoadingSpinner from "../../../common/components/LoadingSpinner";
 import { Track } from "../../../models/track";
 import { toast } from "react-toastify";
 import useAddTrackToPlaylist from "../../../hooks/useAddTrackToPlaylist";
+import { Snackbar, useMediaQuery, useTheme } from "@mui/material";
 
 interface EmptyPlaylistWithSearchProps {
   playlistId: string;
@@ -79,6 +80,10 @@ const EmptyPlaylistWithSearch = ({
   onTrackAdded,
 }: EmptyPlaylistWithSearchProps) => {
   const [keyword, setKeyword] = useState<string>("");
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const {
     data,
@@ -104,60 +109,82 @@ const EmptyPlaylistWithSearch = ({
   const handleAddClick = async (track: Track) => {
     try {
       console.log("🟢 addTrack 시작:", track);
-      await addTrack({playlistId, track});
+      await addTrack({ playlistId, track });
       onTrackAdded(); // ✅ 검색 종료 + 트랙 목록 리패치
+      console.log("✅ Snackbar 열림");
+      setSnackbarOpen(true);
     } catch (error) {
       toast.error("트랙 추가 실패");
-      throw new Error("Fail to add a track to playlist!")
+      throw new Error("Fail to add a track to playlist!");
     }
   };
 
+  const handleSnackbarClose = () => setSnackbarOpen(false);
 
   return (
-    <SearchContainer>
-      <Box display="inline-block" sx={{ maxWidth: 600, width: "100%", px: 2 }}>
-        <Typography variant="h1" my="10px">
-          Let's find something for your playlist
-        </Typography>
+    <>
+      <SearchContainer>
+        <Box
+          display="inline-block"
+          sx={{ maxWidth: 600, width: "100%", px: 2 }}
+        >
+          <Typography variant="h1" my="10px">
+            Let's find something for your playlist
+          </Typography>
 
-        <StyledTextField
-          value={keyword}
-          autoComplete="off"
-          variant="outlined"
-          placeholder="Search for songs or episodes"
-          fullWidth
-          slotProps={{
-            input: {
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon style={{ color: "white" }} />
-                </InputAdornment>
-              ),
-            },
-          }}
-          onChange={handleSearchKeyword}
-        />
-      </Box>
-      <ScrollArea id="scrollable-container">
-        <div>
-          {isLoading ? (
-            <LoadingSpinner /> // 로딩 중일 때 스피너 표시
-          ) : hasResults ? (
-            <SearchResultList // nextpage관련 속성 추가
-              list={tracks}
-              hasNextPage={hasNextPage}
-              isFetchingNextPage={isFetchingNextPage}
-              fetchNextPage={fetchNextPage}
-              onAddClick={handleAddClick}
-            />
-          ) : keyword === "" ? (
-            <></> // 검색어가 없을 때는 아무것도 표시하지 않음
-          ) : (
-            <div>{`No Result for "${keyword}"`}</div> // 검색 결과가 없을 때만 표시
-          )}
-        </div>
-      </ScrollArea>
-    </SearchContainer>
+          <StyledTextField
+            value={keyword}
+            autoComplete="off"
+            variant="outlined"
+            placeholder="Search for songs or episodes"
+            fullWidth
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon style={{ color: "white" }} />
+                  </InputAdornment>
+                ),
+              },
+            }}
+            onChange={handleSearchKeyword}
+          />
+        </Box>
+        <ScrollArea id="scrollable-container">
+          <div>
+            {isLoading ? (
+              <LoadingSpinner /> // 로딩 중일 때 스피너 표시
+            ) : hasResults ? (
+              <SearchResultList // nextpage관련 속성 추가
+                list={tracks}
+                hasNextPage={hasNextPage}
+                isFetchingNextPage={isFetchingNextPage}
+                fetchNextPage={fetchNextPage}
+                onAddClick={handleAddClick}
+              />
+            ) : keyword === "" ? (
+              <></> // 검색어가 없을 때는 아무것도 표시하지 않음
+            ) : (
+              <div>{`No Result for "${keyword}"`}</div> // 검색 결과가 없을 때만 표시
+            )}
+          </div>
+        </ScrollArea>
+      </SearchContainer>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={3000}
+        onClose={handleSnackbarClose}
+        message="🎵 음악이 플레이리스트에 추가되었습니다!"
+        anchorOrigin={{
+          vertical: isMobile ? "bottom" : "bottom",
+          horizontal: "center",
+        }}
+        sx={{
+          bottom: isMobile ? "80px" : undefined,
+          zIndex: 2000, // ✅ Snackbar가 항상 위에 오도록 설정
+        }}
+      />
+    </>
   );
 };
 
