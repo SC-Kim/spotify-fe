@@ -7,7 +7,7 @@ export const getNewReleases = async (
 ): Promise<GetNewReleasesResponse> => {
   try {
     const response = await axios.get(
-      `${SPOTIFY_BASE_URL}/browse/new-releases?limit=6`,
+      `${SPOTIFY_BASE_URL}/browse/new-releases?limit=30`,
       {
         headers: {
           Authorization: `Bearer ${clientCredentialToken}`,
