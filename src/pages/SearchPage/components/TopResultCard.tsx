@@ -109,6 +109,27 @@ const TopResultCard = ({
     <Container
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
+      sx={{
+        display: "flex",
+        flexDirection: {
+          xs: "column", // ✅ 모바일: 세로 정렬
+          sm: "row", // ✅ 태블릿 이상: 가로 정렬
+        },
+        alignItems: "center",
+        padding: "8px 16px",
+        borderRadius: "8px",
+        gap: "16px",
+        backgroundColor: "#121212",
+        height: {
+          xs: "auto",
+          sm: "200px",
+        },
+        position: "relative",
+        transition: "background-color 0.3s ease",
+        "&:hover": {
+          backgroundColor: "#1e1e1e",
+        },
+      }}
     >
       <AlbumImage src={imageUrl} alt={trackName} />
       <InfoBox>

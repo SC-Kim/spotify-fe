@@ -34,11 +34,12 @@ const HomePage = () => {
       </Typography>
       <Grid container spacing={2}>
         {trackAlbums.map((album) => (
-          <Grid
-            key={album.id}
-            sx={{ width: { xs: "50%", sm: "33.33%", md: "25%", lg: "16.66%" } }}
-          >
-            <NewReleaseTracks album={album} />
+          <Grid container spacing={2}>
+            {trackAlbums.map((album) => (
+              <Grid key={album.id} size={{ xs: 6, sm: 4, md: 3, lg: 2 }}>
+                <NewReleaseTracks album={album} />
+              </Grid>
+            ))}
           </Grid>
         ))}
       </Grid>
@@ -48,11 +49,12 @@ const HomePage = () => {
       </Typography>
       <Grid container spacing={2}>
         {albumAlbums.map((album) => (
-          <Grid
-            key={album.id}
-            sx={{ width: { xs: "50%", sm: "33.33%", md: "25%", lg: "16.66%" } }}
-          >
-            <NewReleaseAlbums album={album} />
+          <Grid container spacing={2}>
+            {albumAlbums.map((album) => (
+              <Grid key={album.id} size={{ xs: 6, sm: 4, md: 3, lg: 2 }}>
+                <NewReleaseAlbums album={album} />
+              </Grid>
+            ))}
           </Grid>
         ))}
       </Grid>
