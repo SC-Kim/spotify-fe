@@ -29,6 +29,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useTheme, useMediaQuery, IconButton } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
+import MobilePlaylistItem from "./components/MobilePlaylistItem";
 
 const PlaylistHeader = styled(Grid)<GridProps>({
   display: "flex",
@@ -246,11 +247,29 @@ const PlaylistDetailPage = () => {
             setIsEmpty(false);
           }}
         />
+      ) : isMobile ? (
+        // ✅ 모바일 카드형 UI
+        <Box sx={{ p: 2 }}>
+          {playlistItems?.pages.map((page, pageIndex) =>
+            page.items.map((item, itemIndex) => (
+              <MobilePlaylistItem
+                key={item.track.id}
+                item={item}
+                index={pageIndex * PAGE_LIMIT + itemIndex}
+              />
+            ))
+          )}
+          {isFetchingNextPage && <LoadingSpinner />}
+          <div ref={ref} />
+        </Box>
       ) : (
+        // ✅ 기존 데스크탑 테이블 UI
         <StickyTableContainer ref={scrollContainerRef}>
           <Table
             stickyHeader
             sx={{
+              borderCollapse: "separate",
+              borderSpacing: 0,
               "& tbody .MuiTableCell-root": {
                 borderBottom: "none",
               },
@@ -275,8 +294,22 @@ const PlaylistDetailPage = () => {
                   />
                 ))
               )}
-              <TableRow>
-                <TableCell colSpan={5} align="center">
+              <TableRow
+                sx={{
+                  "& td": {
+                    borderBottom: "none", // ✅ 셀 아래 경계선 제거
+                  },
+                  "&:hover": {
+                    backgroundColor: (theme) => theme.palette.action.hover,
+                    cursor: "pointer",
+                  },
+                }}
+              >
+                <TableCell
+                  colSpan={5}
+                  align="center"
+                  sx={{ borderBottom: "none" }}
+                >
                   <div ref={ref}>
                     {isFetchingNextPage && <LoadingSpinner />}
                   </div>
